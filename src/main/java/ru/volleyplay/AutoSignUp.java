@@ -148,7 +148,7 @@ public class AutoSignUp {
       String responseText = EntityUtils.toString(httpresponse.getEntity());
       if (responseText.contains("К сожалению, мест больше нет")) {
         IMPORTANT_EVENTS_LOGGER.warn("script was too slow and failed to sign you up");
-      } else if (responseText.contains("Вы успешно записаны")) {
+      } else if (responseText.contains("Вы успешно записались на занятие")) {
         IMPORTANT_EVENTS_LOGGER.info("script was fast enough and successfully signed you up");
       } else {
         IMPORTANT_EVENTS_LOGGER.error("unexpected sign-up response message format, have to rewrite the script, full text %s".formatted(responseText));
