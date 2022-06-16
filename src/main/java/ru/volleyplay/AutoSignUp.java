@@ -1,20 +1,8 @@
 package ru.volleyplay;
 
-import jakarta.mail.Address;
-import jakarta.mail.Flags;
-import jakarta.mail.Folder;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.Store;
+import jakarta.mail.*;
 import jakarta.mail.search.ComparisonTerm;
 import jakarta.mail.search.ReceivedDateTerm;
-import java.io.IOException;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -27,10 +15,24 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
 public class AutoSignUp {
   private static final Logger GENERAL_LOGGER = LoggerFactory.getLogger("general");
   private static final Logger IMPORTANT_EVENTS_LOGGER = LoggerFactory.getLogger("important");
   private static final long SLEEP_PERIOD_MS = 2000;
+  private static final Properties MAIL_SESSION_PROPERTIES;
+
+  static {
+    MAIL_SESSION_PROPERTIES = new Properties();
+    MAIL_SESSION_PROPERTIES.put("mail.smtp.connectiontimeout", 1000);
+    MAIL_SESSION_PROPERTIES.put("mail.smtp.timeout", 1000);
+  }
 
   public static void main(String[] args) throws IOException {
     ScriptProperties scriptProperties = ScriptProperties.readProperties();
@@ -55,7 +57,7 @@ public class AutoSignUp {
   }
 
   private static void performAutoSignUpIteration(ScriptProperties scriptProperties) throws MessagingException {
-    Session session = Session.getDefaultInstance(new Properties());
+    Session session = Session.getDefaultInstance(MAIL_SESSION_PROPERTIES);
 
     try (Store store = session.getStore("imaps")) {
       store.connect(scriptProperties.imapHost(), scriptProperties.imapPort(), scriptProperties.username(), scriptProperties.password());
